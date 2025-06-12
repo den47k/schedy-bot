@@ -1,15 +1,18 @@
+from dotenv import load_dotenv
+import os
+
 from aiogram import Bot, Dispatcher
 from aiogram.enums import ParseMode
 from aiogram.webhook.aiohttp_server import SimpleRequestHandler, setup_application
 
-from app.secret import BASE_WEBHOOK_URL, WEBHOOK_PATH, WEB_SERVER_HOST, WEB_SERVER_PORT
 from app.handlers import router
 
 from aiohttp import web
 
+load_dotenv()
 
 async def on_startup(bot: Bot) -> None:
-    await bot.set_webhook(f"{BASE_WEBHOOK_URL}{WEBHOOK_PATH}",
+    await bot.set_webhook(f"{os.getenv("BASE_WEBHOOK_URL")}{os.getenv("WEBHOOK_PATH")}",
                           drop_pending_updates=True)
 
 
@@ -39,10 +42,10 @@ def create_app(bot: Bot, dispatcher: Dispatcher):
         bot=bot
     )
 
-    webhook_requests_handler.register(app, path=WEBHOOK_PATH)
+    webhook_requests_handler.register(app, path=os.getenv("WEBHOOK_PATH"))
 
     setup_application(app, dispatcher, bot=bot)
 
-    web.run_app(app, host=WEB_SERVER_HOST, port=WEB_SERVER_PORT)
+    web.run_app(app, host=os.getenv("WEB_SERVER_HOST"), port=int(os.getenv("WEB_SERVER_PORT")))
 
     return app
