@@ -1,5 +1,9 @@
+from dotenv import load_dotenv
+import os
+
 from app.utils.database import Database
-from app.secret import DATABASE_NAME
+
+load_dotenv()
 
 
-db = Database(DATABASE_NAME)
+db = Database(os.getenv("DATABASE_NAME"))
